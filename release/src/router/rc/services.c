@@ -18509,6 +18509,8 @@ void setup_leds()
 			eval("wl", "-i", "eth5", "ledbh", "10", "7");
 #elif defined(GTAC2900)
 			eval("wl", "ledbh", "9", "1");
+#elif defined(GTAXE11000)
+			eval("wl", "-i", "eth6", "ledbh", "9", "7");
 #endif
 		}
 
@@ -18536,6 +18538,8 @@ void setup_leds()
 			eval("wl", "-i", "eth6", "ledbh", "15", "7");
 #elif defined(RTAX56U)
 			eval("wl", "-i", "eth6", "ledbh", "0", "25");
+#elif defined(GTAXE11000)
+			eval("wl", "-i", "eth7", "ledbh", "9", "7");
 #endif
 		}
 
@@ -18547,6 +18551,8 @@ void setup_leds()
 			eval("wl", "-i", "eth3", "ledbh", "9", "7");
 #elif defined(GTAX11000)
 			eval("wl", "-i", "eth8", "ledbh", "15", "7");
+#elif defined(GTAXE11000)
+			eval("wl", "-i", "eth8", "ledbh", "9", "7");
 #endif
 		}
 #endif
