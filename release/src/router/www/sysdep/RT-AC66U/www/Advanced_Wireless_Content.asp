@@ -1299,8 +1299,8 @@ function enableSmartCon(val){
 			}
 			else{
 				desc = ["<#smart_connect_tri#> (2.4 GHz, 5 GHz-1 and 5 GHz-2)", "5 GHz Smart Connect (5 GHz-1 and 5 GHz-2)"];
-			value = ["1", "2"];
-		}
+				value = ["1", "2"];
+			}
 		}
 		else if(wl_info.band2g_support && wl_info.band5g_support){
 			desc = ["<#smart_connect_dual#> (2.4 GHz and 5 GHz)"];
@@ -2616,7 +2616,7 @@ function handleMFP(){
 					<th><a class="hintstyle" href="javascript:void(0);" onClick="openHint(0, 7);"><#WLANConfig11b_x_PSKKey_itemname#></a></th>
 					<td>
 						<div class="wpa_psk_container">
-							<input name="wl_wpa_psk" maxlength="64" class="input_32_table" value="<% nvram_get("wl_wpa_psk"); %>" autocorrect="off" autocapitalize="off" autocomplete="new-password" type="password" onBlur="switchType(this, false);" onFocus="switchType(this, true);">
+							<div><input type="text" name="wl_wpa_psk" maxlength="64" class="input_32_table" value="<% nvram_get("wl_wpa_psk"); %>" autocorrect="off" autocapitalize="off"></div>
 						</div>
 					</td>
 			  	</tr>
