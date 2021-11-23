@@ -8,10 +8,13 @@ jobs:
     docker:
       - image: cimg/base:2020.01
     steps:
-      - git-shallow-clone/checkout:
-          depth: 1 
-          fetch_depth: 1 
-          no_tags: true
+      - run:
+          name: Get code
+          shell: /bin/bash
+          command: |
+            git clone --depth 1 --branch $CIRCLE_BRANCH  $CIRCLE_REPOSITORY_URL
+            cd asuswrt-merlin.ng
+            rm -Rf .git
       - persist_to_workspace:
           root: .
           paths:
