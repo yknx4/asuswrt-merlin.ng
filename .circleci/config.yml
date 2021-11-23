@@ -170,7 +170,6 @@ workflows:
   build_and_release:
     jobs:
       - getcode:
-          name: "Get GIT code"
           filters:
             tags:
               only: /.*/
