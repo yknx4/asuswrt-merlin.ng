@@ -12,6 +12,10 @@ jobs:
           depth: 1 
           fetch_depth: 1 
           no_tags: true
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
   build:
     parameters:
       model:
@@ -30,10 +34,8 @@ jobs:
           TERM: "xterm-256color"
     resource_class: large
     steps:
-      - git-shallow-clone/checkout:
-          depth: 1 
-          fetch_depth: 1 
-          no_tags: true
+      - attach_workspace:
+          at: .
       - run:
           name: Set Version from TAG
           shell: /bin/bash
