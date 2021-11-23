@@ -5,8 +5,6 @@ orbs:
 
 jobs:
   getcode:
-    docker:
-      - image: alpine
     steps:
       - git-shallow-clone/checkout:
           depth: 1 
