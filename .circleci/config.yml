@@ -20,7 +20,9 @@ jobs:
           TERM: "xterm-256color"
     resource_class: large
     steps:
-      - git-shallow-clone
+      - git-shallow-clone/checkout:
+          depth: 1 
+          fetch_depth: 1 
       - run:
           name: Set Version from TAG
           shell: /bin/bash
