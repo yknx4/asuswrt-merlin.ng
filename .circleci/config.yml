@@ -6,7 +6,7 @@ orbs:
 jobs:
   getcode:
     docker:
-      - image: alpine
+      - image: cimg/base:2020.01
     steps:
       - git-shallow-clone/checkout:
           depth: 1 
