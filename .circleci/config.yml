@@ -2,11 +2,11 @@ version: 2.1
 
 orbs: 
   git-shallow-clone: guitarrapc/git-shallow-clone@2.4.0
+
 jobs:
   getcode:
     docker:
       - image: alpine
-    resource_class: small
     steps:
       - git-shallow-clone/checkout:
           depth: 1 
@@ -171,6 +171,9 @@ workflows:
     jobs:
       - getcode:
           name: "Get GIT code"
+          filters:
+            tags:
+              only: /.*/
       - build:
           name: "build_dsl-ac68u"
           model: "dsl-ac68u"
