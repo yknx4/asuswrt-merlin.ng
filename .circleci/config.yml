@@ -3,6 +3,15 @@ version: 2.1
 orbs: 
   git-shallow-clone: guitarrapc/git-shallow-clone@2.4.0
 jobs:
+  getcode:
+    docker:
+      - image: alpine
+    resource_class: small
+    steps:
+      - git-shallow-clone/checkout:
+          depth: 1 
+          fetch_depth: 1 
+          no_tags: true
   build:
     parameters:
       model:
@@ -24,6 +33,7 @@ jobs:
       - git-shallow-clone/checkout:
           depth: 1 
           fetch_depth: 1 
+          no_tags: true
       - run:
           name: Set Version from TAG
           shell: /bin/bash
@@ -159,10 +169,14 @@ workflows:
   version: 2.1
   build_and_release:
     jobs:
+      - getcode:
+          name: "Get GIT code"
       - build:
           name: "build_dsl-ac68u"
           model: "dsl-ac68u"
           release_dir: "src-rt-6.x.4708"
+          requires:
+            - getcode
           filters:
             tags:
               only: /.*/
@@ -175,6 +189,8 @@ workflows:
           name: "build_dsl-ax82u"
           model: "dsl-ax82u"
           release_dir: "src-rt-5.02axhnd.675x"
+          requires:
+            - getcode
           filters:
             tags:
               only: /.*/
@@ -187,6 +203,8 @@ workflows:
           name: "build_rt-ax82u"
           model: "rt-ax82u"
           release_dir: "src-rt-5.02axhnd.675x"
+          requires:
+            - getcode
           filters:
             tags:
               only: /.*/
