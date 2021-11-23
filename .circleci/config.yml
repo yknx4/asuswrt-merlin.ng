@@ -82,7 +82,7 @@ jobs:
               tar xzf /tmp/keys.tgz --no-same-owner -C ${PROJECT_DIR}/release/${RELEASE_DIR}/router/bwdpi_source/prebuild/RT-AX82U
             fi
             echo "----- BUILD -----"
-            make ${MODEL} | tee "/tmp/build.log"
+            make -j4 ${MODEL} | tee "/tmp/build.log"
             echo "------ DONE -----"
             ls ${PROJECT_DIR}/release/${RELEASE_DIR}/image/
       - run:
