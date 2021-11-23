@@ -1566,8 +1566,8 @@ patch:
 
 version_info: sanity_check $(KERNEL_DIR)/.pre_kernelbuild
 	@echo "$(MAKECMDGOALS):";\
-	CURRENT_ARCH=$(KERNEL_ARCH) $(MAKE) -C $(BUILD_DIR)/build -f Bcmkernel.mk -j1 --silent version_info;
-	# FIXME -- should not need -j1 here
+	CURRENT_ARCH=$(KERNEL_ARCH) $(MAKE) -C $(BUILD_DIR)/build -f Bcmkernel.mk -j36 --silent version_info;
+	# FIXME -- should not need -j36 here
 
 ###########################################
 #
