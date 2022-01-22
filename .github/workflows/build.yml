@@ -81,7 +81,8 @@ jobs:
           BWDPI_KEYS_DSLAX82U: ""
           BWDPI_KEYS_RTAX82U: ""
         run: |
-          sudo ln -s ${{ github.workspace }} /_w
+          sudo mv ${{ github.workspace }} /_w
+          sudo ln -s /_w ${{ github.workspace }}
           echo "Setting up toolchains"
           export LD_LIBRARY_PATH=$LD_LIBRARY:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/lib
           export TOOLCHAIN_BASE=/opt/toolchains
