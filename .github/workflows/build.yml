@@ -13,7 +13,7 @@ jobs:
       run:
         shell: bash
     env:
-      TOOLCHAIN_BASE: /opt/toolchains
+      TOOLCHAIN_BASE: ${{ github.workspace }}/opt/toolchains
       LANG: C.UTF-8
       SHELL: /bin/bash
 
@@ -40,19 +40,10 @@ jobs:
           repository: 'RMerl/am-toolchains'
           path: 'am-toolchains'
       - run: |
-          echo "Setting up toolchains" && \
-          echo "export LD_LIBRARY_PATH=$LD_LIBRARY:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/lib" >> /etc/profile && \
-          echo "export TOOLCHAIN_BASE=/opt/toolchains" >> /etc/profile && \
-          echo "PATH=\$PATH:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin" >> /etc/profile && \
-          echo "PATH=\$PATH:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin" >> /etc/profile && \
-          echo "export LD_LIBRARY_PATH=$LD_LIBRARY:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/lib" >> /etc/profile && \
-          echo "PATH=\$PATH:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin" >> /etc/profile && \
-          echo "PATH=\$PATH:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin" >> /etc/profile && \
-          echo "PATH=\$PATH:/opt/brcm-arm/bin" >> /etc/profile && \
           mkdir -p ${{ github.workspace }}/hnd/tools/linux/ && \
           ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 ${{ github.workspace }}/hnd/tools/linux/hndtools-arm-linux-2.6.36-uclibc-4.5.3 && \
-          ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 /opt/brcm-arm && \
-          ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-hnd /opt/toolchains
+          ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 ${{ github.workspace }}/opt/brcm-arm && \
+          ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-hnd ${{ github.workspace }}/opt/toolchains
       - name: Set Version from TAG
         if: startsWith(github.ref, 'refs/tags')
         run: |
@@ -72,9 +63,19 @@ jobs:
           PROJECT_DIR: ${{ github.workspace }}
           MODEL: "dsl-ax82u"
           RELEASE_DIR: "src-rt-5.02axhnd.675x"
-          LD_LIBRARY_PATH: "$LD_LIBRARY:${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3/lib"
-          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin"
+          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:${{ github.workspace }}/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:${{ github.workspace }}/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:${{ github.workspace }}/opt/brcm-arm/bin:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:${{ github.workspace }}/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:${{ github.workspace }}/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:${{ github.workspace }}/opt/brcm-arm/bin"
         run: |
+          echo "Setting up toolchains"
+          export LD_LIBRARY_PATH=$LD_LIBRARY:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/lib
+          export TOOLCHAIN_BASE=${{ github.workspace }}/opt/toolchains
+          export PATH=$PATH:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin
+          export PATH=$PATH:${{ github.workspace }}/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin
+          export LD_LIBRARY_PATH=$LD_LIBRARY:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/lib
+          export PATH=$PATH:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin
+          export PATH=$PATH:${{ github.workspace }}/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin
+          export PATH=$PATH:${{ github.workspace }}/opt/brcm-arm/bin
+
+          export LD_LIBRARY_PATH=$LD_LIBRARY:${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3/lib
           export MERLINUPDATE=y
           cd ${PROJECT_DIR}/release/${RELEASE_DIR}
           echo "----- Files in dir: $(pwd) -----"
@@ -103,20 +104,18 @@ jobs:
           PROJECT_DIR: ${{ github.workspace }}
           MODEL: "dsl-ax82u"
           RELEASE_DIR: "src-rt-5.02axhnd.675x"
-          LD_LIBRARY_PATH: "$LD_LIBRARY:${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3/lib"
-          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin"
         run: |
           export IMAGE_PATH=${PROJECT_DIR}/release/${RELEASE_DIR}/image/
-          mkdir -p workspace/release/
+          mkdir -p ${{ github.workspace }}/workspace/release/
           if [[ ${MODEL} == "dsl-ac68u" ]]; then
             mv "${IMAGE_PATH}/DSL-AC68U_${CIRCLE_TAG}.trx" "${IMAGE_PATH}/DSL-AC68U_${CIRCLE_TAG}_NO-DSL-FIRMWARE.trx"
-            cp ${IMAGE_PATH}/*.trx workspace/release/
-            cp ${IMAGE_PATH}/DSL*DSL*.md5 workspace/release/ || :
+            cp ${IMAGE_PATH}/*.trx ${{ github.workspace }}/workspace/release/
+            cp ${IMAGE_PATH}/DSL*DSL*.md5 ${{ github.workspace }}/workspace/release/ || :
           elif [[ ${MODEL} == "rt-ax82u" ]] || [[ ${MODEL} == "dsl-ax82u" ]]; then
             cp ${IMAGE_PATH}/*_cferom_puresqubi.md5 workspace/release
             cp ${IMAGE_PATH}/*_cferom_puresqubi.w   workspace/release || :
           fi
-          cp /tmp/build.log workspace/release/${MODEL}-build.log
+          cp /tmp/build.log ${{ github.workspace }}/workspace/release/${MODEL}-build.log
           if [ -z "${CIRCLE_TAG}" ]; then
             echo "No CHANGELOG to copy. Not a release build."
           else
