@@ -40,11 +40,10 @@ jobs:
           repository: 'RMerl/am-toolchains'
           path: 'am-toolchains'
       - run: |
-          mkdir -p ${{ github.workspace }}/hnd/tools/linux/ && \
-          mkdir -p ${{ github.workspace }}/opt/ && \
-          ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 ${{ github.workspace }}/hnd/tools/linux/hndtools-arm-linux-2.6.36-uclibc-4.5.3 && \
-          ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 ${{ github.workspace }}/opt/brcm-arm && \
-          ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-hnd ${{ github.workspace }}/opt/toolchains
+          mkdir -p ${{ github.workspace }}/hnd/tools/linux/
+          ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 ${{ github.workspace }}/hnd/tools/linux/hndtools-arm-linux-2.6.36-uclibc-4.5.3 
+          sudo ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 /opt/brcm-arm 
+          sudo ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-hnd /opt/toolchains
       - name: Set Version from TAG
         if: startsWith(github.ref, 'refs/tags')
         run: |
@@ -65,21 +64,21 @@ jobs:
           PROJECT_DIR: /_w
           MODEL: "dsl-ax82u"
           RELEASE_DIR: "src-rt-5.02axhnd.675x"
-          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/_w/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/_w/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/_w/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/_w/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/_w/opt/brcm-arm/bin:/_w/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/_w/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/_w/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/_w/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/_w/opt/brcm-arm/bin"
+          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin"
           BWDPI_KEYS_DSLAC68U: ""
           BWDPI_KEYS_DSLAX82U: ""
           BWDPI_KEYS_RTAX82U: ""
         run: |
           sudo ln -s ${{ github.workspace }} /_w
           echo "Setting up toolchains"
-          export LD_LIBRARY_PATH=$LD_LIBRARY:${{ env.V_WORKSPACE}}/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/lib
-          export TOOLCHAIN_BASE=${{ env.V_WORKSPACE}}/opt/toolchains
-          export PATH=$PATH:${{ env.V_WORKSPACE}}/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin
-          export PATH=$PATH:${{ env.V_WORKSPACE}}/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin
-          export LD_LIBRARY_PATH=$LD_LIBRARY:${{ env.V_WORKSPACE}}/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/lib
-          export PATH=$PATH:${{ env.V_WORKSPACE}}/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin
-          export PATH=$PATH:${{ env.V_WORKSPACE}}/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin
-          export PATH=$PATH:${{ env.V_WORKSPACE}}/opt/brcm-arm/bin
+          export LD_LIBRARY_PATH=$LD_LIBRARY:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/lib
+          export TOOLCHAIN_BASE=/opt/toolchains
+          export PATH=$PATH:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin
+          export PATH=$PATH:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin
+          export LD_LIBRARY_PATH=$LD_LIBRARY:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/lib
+          export PATH=$PATH:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin
+          export PATH=$PATH:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin
+          export PATH=$PATH:/opt/brcm-arm/bin
 
           export LD_LIBRARY_PATH=$LD_LIBRARY:${{ env.V_WORKSPACE}}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3/lib
           export MERLINUPDATE=y
