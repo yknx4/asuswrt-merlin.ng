@@ -42,18 +42,19 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            release/**/*.a
-            release/**/*.o
-            release/**/*.Tpo
-            release/**/*.lo
-            release/**/*.so
-            release/**/*.mo
-            release/**/*.pot
-            release/**/*.depend
-            release/**/*.prep
-            release/**/*.map
-            release/**/*.unresolved 
-            release/**/*.symbols
+            release/${{ matrix.release-dir }}/**/*.a
+            release/${{ matrix.release-dir }}/**/*.o
+            release/${{ matrix.release-dir }}/**/*.Tpo
+            release/${{ matrix.release-dir }}/**/*.lo
+            release/${{ matrix.release-dir }}/**/*.so
+            release/${{ matrix.release-dir }}/**/*.mo
+            release/${{ matrix.release-dir }}/**/*.pot
+            release/${{ matrix.release-dir }}/**/*.depend
+            release/${{ matrix.release-dir }}/**/*.prep
+            release/${{ matrix.release-dir }}/**/*.map
+            release/${{ matrix.release-dir }}/**/*.unresolved 
+            release/${{ matrix.release-dir }}/**/*.symbols
+            !release/${{ matrix.release-dir }}/bcmdrivers/broadcom/net/wl/**/*
           key: ${{ runner.os }}-${{ github.ref_name }}-${{ matrix.model }}-${{ matrix.release-dir }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-${{ github.ref_name }}-${{ matrix.model }}-${{ matrix.release-dir }}-
