@@ -54,9 +54,9 @@ jobs:
             release/**/*.map
             release/**/*.unresolved 
             release/**/*.symbols
-          key: ${{ runner.os }}-${{ github.ref_name }}-dsl-ax82u-src-rt-5.02axhnd.675x-${{ github.sha }}
+          key: ${{ runner.os }}-${{ github.ref_name }}-${{ matrix.model }}-${{ matrix.release-dir }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-${{ github.ref_name }}-dsl-ax82u-src-rt-5.02axhnd.675x-
+            ${{ runner.os }}-${{ github.ref_name }}-${{ matrix.model }}-${{ matrix.release-dir }}-
       - name: Set Version from TAG
         if: startsWith(github.ref, 'refs/tags')
         run: |
