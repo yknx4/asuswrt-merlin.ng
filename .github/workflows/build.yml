@@ -29,12 +29,12 @@ jobs:
       RELEASE_DIR: ${{ matrix.release-dir }}
 
     steps:
-      - name: Install Deps
-        uses: ./.github/actions/install-deps
       - name: Check out repository code
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Install Deps
+        uses: ./.github/actions/install-deps
       - run: git restore-mtime release
       - name: Install Toolchain
         uses: ./.github/actions/install-toolchain
