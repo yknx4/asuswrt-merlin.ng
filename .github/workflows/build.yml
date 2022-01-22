@@ -65,6 +65,9 @@ jobs:
           MODEL: "dsl-ax82u"
           RELEASE_DIR: "src-rt-5.02axhnd.675x"
           PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:${{ github.workspace }}/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:${{ github.workspace }}/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:${{ github.workspace }}/opt/brcm-arm/bin:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:${{ github.workspace }}/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:${{ github.workspace }}/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:${{ github.workspace }}/opt/brcm-arm/bin"
+          BWDPI_KEYS_DSLAC68U: ""
+          BWDPI_KEYS_DSLAX82U: ""
+          BWDPI_KEYS_RTAX82U: ""
         run: |
           echo "Setting up toolchains"
           export LD_LIBRARY_PATH=$LD_LIBRARY:${{ github.workspace }}/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/lib
@@ -82,19 +85,19 @@ jobs:
           echo "----- Files in dir: $(pwd) -----"
           ls -alh
           echo "----- ENV VARS -----"
-          source  ~/.profile
+          # source  ~/.profile
           env
-          echo "----- SETTING UP SECRET FILES -----"
-          if [[ ${MODEL} == "dsl-ac68u" ]]; then
-            echo $BWDPI_KEYS_DSLAC68U | base64 -d > /tmp/keys.tgz
-            tar xzf /tmp/keys.tgz --no-same-owner -C ${PROJECT_DIR}/release/${RELEASE_DIR}/router/bwdpi_source/prebuild/DSL-AC68U
-          elif [[ ${MODEL} == "dsl-ax82u" ]]; then
-            echo $BWDPI_KEYS_DSLAX82U | base64 -d > /tmp/keys.tgz
-            tar xzf /tmp/keys.tgz --no-same-owner -C ${PROJECT_DIR}/release/${RELEASE_DIR}/router/bwdpi_source/prebuild/DSL-AX82U
-          elif [[ ${MODEL} == "rt-ax82u" ]]; then
-            echo $BWDPI_KEYS_RTAX82U | base64 -d > /tmp/keys.tgz
-            tar xzf /tmp/keys.tgz --no-same-owner -C ${PROJECT_DIR}/release/${RELEASE_DIR}/router/bwdpi_source/prebuild/RT-AX82U
-          fi
+          # echo "----- SETTING UP SECRET FILES -----"
+          # if [[ ${MODEL} == "dsl-ac68u" ]]; then
+          #   echo $BWDPI_KEYS_DSLAC68U | base64 -d > /tmp/keys.tgz
+          #   tar xzf /tmp/keys.tgz --no-same-owner -C ${PROJECT_DIR}/release/${RELEASE_DIR}/router/bwdpi_source/prebuild/DSL-AC68U
+          # elif [[ ${MODEL} == "dsl-ax82u" ]]; then
+          #   echo $BWDPI_KEYS_DSLAX82U | base64 -d > /tmp/keys.tgz
+          #   tar xzf /tmp/keys.tgz --no-same-owner -C ${PROJECT_DIR}/release/${RELEASE_DIR}/router/bwdpi_source/prebuild/DSL-AX82U
+          # elif [[ ${MODEL} == "rt-ax82u" ]]; then
+          #   echo $BWDPI_KEYS_RTAX82U | base64 -d > /tmp/keys.tgz
+          #   tar xzf /tmp/keys.tgz --no-same-owner -C ${PROJECT_DIR}/release/${RELEASE_DIR}/router/bwdpi_source/prebuild/RT-AX82U
+          # fi
           echo "----- BUILD -----"
           make ${MODEL} | tee "/tmp/build.log"
           echo "------ DONE -----"
