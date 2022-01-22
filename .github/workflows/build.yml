@@ -44,6 +44,7 @@ jobs:
           path: |
             release/**/*.a
             release/**/*.o
+            release/**/*.Tpo
             release/**/*.lo
             release/**/*.so
             release/**/*.mo
