@@ -12,10 +12,21 @@ jobs:
     defaults:
       run:
         shell: bash
+    strategy:
+      matrix:
+       include:
+        #  - model: "dsl-ax82u"
+        #    release-dir: "src-rt-5.02axhnd.675x"
+         - model: "rt-ax82u"
+           release-dir: "src-rt-5.02axhnd.675x"
+        #  - model: "dsl-ac68u"
+        #    release-dir: "src-rt-6.x.4708"
     env:
       TOOLCHAIN_BASE: ${{ github.workspace }}/opt/toolchains
       LANG: C.UTF-8
       SHELL: /bin/bash
+      MODEL: ${{ matrix.model }}
+      RELEASE_DIR: ${{ matrix.release-dir }}
 
     steps:
       - name: Install Deps
@@ -108,8 +119,6 @@ jobs:
         shell: bash
         env:
           PROJECT_DIR: ${{ github.workspace }}
-          MODEL: "dsl-ax82u"
-          RELEASE_DIR: "src-rt-5.02axhnd.675x"
         run: |
           export IMAGE_PATH=${PROJECT_DIR}/release/${RELEASE_DIR}/image/
           mkdir -p ${{ github.workspace }}/workspace/release/
@@ -133,5 +142,5 @@ jobs:
       - name: Archive built images
         uses: actions/upload-artifact@v2
         with:
-          name: release
+          name: release-${{ matrix.model }}
           path: ./workspace/release
