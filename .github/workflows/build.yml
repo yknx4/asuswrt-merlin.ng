@@ -1,0 +1,127 @@
+name: Build
+on:
+  push:
+    branches-ignore:
+      - master
+      - mainline
+      - DEV_45581_3
+    tags:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      TOOLCHAIN_BASE: /opt/toolchains
+      LANG: C.UTF-8
+
+    steps:
+      - run: sudo dpkg --add-architecture i386
+      - run: sudo apt update
+      - run: |
+          apt -y install curl vim sudo git libtool-bin cmake libproxy-dev uuid-dev liblzo2-dev autoconf automake bash bison \
+          bzip2 diffutils file flex m4 g++ gawk groff-base libncurses5-dev libtool libslang2 make patch perl pkg-config shtool \
+          subversion tar texinfo zlib1g zlib1g-dev git gettext libexpat1-dev libssl-dev cvs gperf unzip \
+          python libxml-parser-perl gcc-multilib gconf-editor libxml2-dev g++-multilib gitk libncurses5 mtd-utils \
+          libncurses5-dev libvorbis-dev git autopoint autogen sed build-essential intltool libglib2.0-dev \
+          xutils-dev lib32z1-dev lib32stdc++6 xsltproc gtk-doc-tools automake-1.15 locales libelf1:i386 gosu bc rsync
+      - run: sudo ln -s bash /bin/sh.bash && mv /bin/sh.bash /bin/sh
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          repository: 'RMerl/am-toolchains'
+          path: 'am-toolchains'
+      - run: |
+          echo "Setting up toolchains" && \
+          echo "export LD_LIBRARY_PATH=$LD_LIBRARY:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/lib" >> /etc/profile && \
+          echo "export TOOLCHAIN_BASE=/opt/toolchains" >> /etc/profile && \
+          echo "PATH=\$PATH:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin" >> /etc/profile && \
+          echo "PATH=\$PATH:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin" >> /etc/profile && \
+          echo "export LD_LIBRARY_PATH=$LD_LIBRARY:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/lib" >> /etc/profile && \
+          echo "PATH=\$PATH:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin" >> /etc/profile && \
+          echo "PATH=\$PATH:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin" >> /etc/profile && \
+          echo "PATH=\$PATH:/opt/brcm-arm/bin" >> /etc/profile && \
+          mkdir -p ${{ github.workspace }}/hnd/tools/linux/ && \
+          ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 ${{ github.workspace }}/hnd/tools/linux/hndtools-arm-linux-2.6.36-uclibc-4.5.3 && \
+          ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 /opt/brcm-arm && \
+          ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-hnd /opt/toolchains
+      - name: Build
+        env:
+          PROJECT_DIR: ${{ github.workspace }}
+          CHANGELOG_FILE: "/tmp/CHANGELOG"
+          MODEL: "dsl-ax82u"
+          RELEASE_DIR: "src-rt-5.02axhnd.675x"
+          LD_LIBRARY_PATH: "$LD_LIBRARY:${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3/lib"
+          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin"
+      - name: Set Version from TAG
+        if: startsWith(github.ref, "refs/tags")
+        run: |
+          MAJOR_VER=$(echo "${{ github.ref }}" | sed -E 's/([0-9.]*)[_-]?(.*)/\1/')
+          MINOR_VER=$(echo "${{ github.ref }}" | sed -E 's/([0-9.]*)[_-]?(.*)/\2/')
+          sed -i "s/SERIALNO=.*/SERIALNO=${MAJOR_VER}/g" release/src-rt/version.conf
+          sed -i "s/EXTENDNO=.*/EXTENDNO=${MINOR_VER}/g" release/src-rt/version.conf
+      - name: Generate changelog
+        env:
+          CHANGELOG_FILE: "/tmp/CHANGELOG"
+        run: |
+          python tools/get-last-notes.py > "${CHANGELOG_FILE}"
+          cat "${CHANGELOG_FILE}"
+      - name: Build firmware
+        shell: bash
+        env:
+          PROJECT_DIR: ${{ github.workspace }}
+          MODEL: "dsl-ax82u"
+          RELEASE_DIR: "src-rt-5.02axhnd.675x"
+          LD_LIBRARY_PATH: "$LD_LIBRARY:${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3/lib"
+          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin"
+        run: |
+          export MERLINUPDATE=y
+          cd ${PROJECT_DIR}/release/${RELEASE_DIR}
+          echo "----- Files in dir: $(pwd) -----"
+          ls -alh
+          echo "----- ENV VARS -----"
+          source  ~/.profile
+          env
+          echo "----- SETTING UP SECRET FILES -----"
+          if [[ ${MODEL} == "dsl-ac68u" ]]; then
+            echo $BWDPI_KEYS_DSLAC68U | base64 -d > /tmp/keys.tgz
+            tar xzf /tmp/keys.tgz --no-same-owner -C ${PROJECT_DIR}/release/${RELEASE_DIR}/router/bwdpi_source/prebuild/DSL-AC68U
+          elif [[ ${MODEL} == "dsl-ax82u" ]]; then
+            echo $BWDPI_KEYS_DSLAX82U | base64 -d > /tmp/keys.tgz
+            tar xzf /tmp/keys.tgz --no-same-owner -C ${PROJECT_DIR}/release/${RELEASE_DIR}/router/bwdpi_source/prebuild/DSL-AX82U
+          elif [[ ${MODEL} == "rt-ax82u" ]]; then
+            echo $BWDPI_KEYS_RTAX82U | base64 -d > /tmp/keys.tgz
+            tar xzf /tmp/keys.tgz --no-same-owner -C ${PROJECT_DIR}/release/${RELEASE_DIR}/router/bwdpi_source/prebuild/RT-AX82U
+          fi
+          echo "----- BUILD -----"
+          make ${MODEL} | tee "/tmp/build.log"
+          echo "------ DONE -----"
+          ls ${PROJECT_DIR}/release/${RELEASE_DIR}/image/
+      - name: Prepare workspace
+        shell: bash
+        env:
+          PROJECT_DIR: ${{ github.workspace }}
+          MODEL: "dsl-ax82u"
+          RELEASE_DIR: "src-rt-5.02axhnd.675x"
+          LD_LIBRARY_PATH: "$LD_LIBRARY:${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3/lib"
+          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin"
+        run: |
+          export IMAGE_PATH=${PROJECT_DIR}/release/${RELEASE_DIR}/image/
+          mkdir -p workspace/release/
+          if [[ ${MODEL} == "dsl-ac68u" ]]; then
+            mv "${IMAGE_PATH}/DSL-AC68U_${CIRCLE_TAG}.trx" "${IMAGE_PATH}/DSL-AC68U_${CIRCLE_TAG}_NO-DSL-FIRMWARE.trx"
+            cp ${IMAGE_PATH}/*.trx workspace/release/
+            cp ${IMAGE_PATH}/DSL*DSL*.md5 workspace/release/ || :
+          elif [[ ${MODEL} == "rt-ax82u" ]] || [[ ${MODEL} == "dsl-ax82u" ]]; then
+            cp ${IMAGE_PATH}/*_cferom_puresqubi.md5 workspace/release
+            cp ${IMAGE_PATH}/*_cferom_puresqubi.w   workspace/release || :
+          fi
+          cp /tmp/build.log workspace/release/${MODEL}-build.log
+          if [ -z "${CIRCLE_TAG}" ]; then
+            echo "No CHANGELOG to copy. Not a release build."
+          else
+            # Changelogs are the same for each models since we are building from the same branch. We do use only the one generated by DSL-AC68U for now.
+            if [[ ${MODEL} == "dsl-ac68u" ]]; then
+              cp "${CHANGELOG_FILE}" workspace/release
+            fi
+          fi
