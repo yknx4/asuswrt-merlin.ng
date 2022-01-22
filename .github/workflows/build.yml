@@ -76,8 +76,6 @@ jobs:
         env:
           V_WORKSPACE: /_w
           PROJECT_DIR: /_w
-          MODEL: "dsl-ax82u"
-          RELEASE_DIR: "src-rt-5.02axhnd.675x"
           PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin:/opt/toolchains/crosstools-arm-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.3-linux-4.1-glibc-2.22-binutils-2.25/usr/bin:/opt/toolchains/crosstools-arm-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/toolchains/crosstools-aarch64-gcc-5.5-linux-4.1-glibc-2.26-binutils-2.28.1/usr/bin:/opt/brcm-arm/bin"
           BWDPI_KEYS_DSLAC68U: ""
           BWDPI_KEYS_DSLAX82U: ""
@@ -122,7 +120,7 @@ jobs:
         env:
           PROJECT_DIR: ${{ github.workspace }}
         run: |
-          export IMAGE_PATH=${PROJECT_DIR}/release/${RELEASE_DIR}/image/
+          export IMAGE_PATH=${PROJECT_DIR}/release/${RELEASE_DIR}/image
           mkdir -p ${{ github.workspace }}/workspace/release/
           if [[ ${MODEL} == "dsl-ac68u" ]]; then
             mv "${IMAGE_PATH}/DSL-AC68U_${CIRCLE_TAG}.trx" "${IMAGE_PATH}/DSL-AC68U_${CIRCLE_TAG}_NO-DSL-FIRMWARE.trx"
