@@ -18,32 +18,33 @@ jobs:
       SHELL: /bin/bash
 
     steps:
-      - run: sudo dpkg --add-architecture i386
-      - run: sudo apt update
-      - run: |
-          sudo apt -y install curl vim sudo git libtool-bin cmake libproxy-dev uuid-dev liblzo2-dev autoconf automake bash bison \
-          bzip2 diffutils file flex m4 g++ gawk groff-base libncurses5-dev libtool libslang2 make patch perl pkg-config shtool \
-          subversion tar texinfo zlib1g zlib1g-dev git gettext libexpat1-dev libssl-dev cvs gperf unzip \
-          python libxml-parser-perl gcc-multilib gconf-editor libxml2-dev g++-multilib libncurses5 mtd-utils \
-          libncurses5-dev libvorbis-dev git autopoint autogen sed build-essential intltool libglib2.0-dev \
-          xutils-dev lib32z1-dev lib32stdc++6 xsltproc gtk-doc-tools automake-1.15 locales libelf1:i386 gosu bc rsync
-      - run: |
-          echo "dash dash/sh boolean false" | sudo debconf-set-selections
-          sudo dpkg-reconfigure dash
-        env:
-          DEBIAN_FRONTEND: noninteractive
-      - name: Check out repository code
-        uses: actions/checkout@v2
+      - name: Install Deps
+        uses: ./.github/actions/install-deps
       - name: Check out repository code
         uses: actions/checkout@v2
         with:
-          repository: 'RMerl/am-toolchains'
-          path: 'am-toolchains'
-      - run: |
-          mkdir -p ${{ github.workspace }}/hnd/tools/linux/
-          ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 ${{ github.workspace }}/hnd/tools/linux/hndtools-arm-linux-2.6.36-uclibc-4.5.3 
-          sudo ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 /opt/brcm-arm 
-          sudo ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-hnd /opt/toolchains
+          fetch-depth: 0
+      - run: git restore-mtime release
+      - name: Install Toolchain
+        uses: ./.github/actions/install-toolchain
+      - name: Cache multiple paths
+        uses: actions/cache@v2
+        with:
+          path: |
+            release/**/*.a
+            release/**/*.o
+            release/**/*.lo
+            release/**/*.so
+            release/**/*.mo
+            release/**/*.pot
+            release/**/*.depend
+            release/**/*.prep
+            release/**/*.map
+            release/**/*.unresolved 
+            release/**/*.symbols
+          key: ${{ runner.os }}-${{ github.ref_name }}-dsl-ax82u-src-rt-5.02axhnd.675x-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ github.ref_name }}-dsl-ax82u-src-rt-5.02axhnd.675x-
       - name: Set Version from TAG
         if: startsWith(github.ref, 'refs/tags')
         run: |
@@ -129,3 +130,8 @@ jobs:
               cp "${CHANGELOG_FILE}" workspace/release
             fi
           fi
+      - name: Archive built images
+        uses: actions/upload-artifact@v2
+        with:
+          name: release
+          path: ./workspace/release

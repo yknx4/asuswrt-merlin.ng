@@ -1,0 +1,16 @@
+name: 'Install Toolchain'
+description: 'Install Toolchain required for a full build'
+runs:
+  using: "composite"
+  steps:
+    - name: Check out repository code
+      uses: actions/checkout@v2
+      with:
+        repository: 'RMerl/am-toolchains'
+        path: 'am-toolchains'
+    - run: |
+        mkdir -p ${{ github.workspace }}/hnd/tools/linux/
+        ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 ${{ github.workspace }}/hnd/tools/linux/hndtools-arm-linux-2.6.36-uclibc-4.5.3 
+        sudo ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 /opt/brcm-arm 
+        sudo ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-hnd /opt/toolchains
+      shell: bash
