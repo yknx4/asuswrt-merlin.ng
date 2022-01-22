@@ -41,6 +41,7 @@ jobs:
           path: 'am-toolchains'
       - run: |
           mkdir -p ${{ github.workspace }}/hnd/tools/linux/ && \
+          mkdir -p ${{ github.workspace }}/opt/ && \
           ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 ${{ github.workspace }}/hnd/tools/linux/hndtools-arm-linux-2.6.36-uclibc-4.5.3 && \
           ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-sdk/hndtools-arm-linux-2.6.36-uclibc-4.5.3 ${{ github.workspace }}/opt/brcm-arm && \
           ln -s ${{ github.workspace }}/am-toolchains/brcm-arm-hnd ${{ github.workspace }}/opt/toolchains
