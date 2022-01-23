@@ -3,7 +3,20 @@ description: 'Install Toolchain required for a full build'
 runs:
   using: "composite"
   steps:
+    - name: Get last commit
+      shell: bash
+      id: last-toolchain
+      run: |
+        SHA=$(gh api repos/RMerl/am-toolchains/commits --jq '.[0].sha' | tr -d '\n')
+        echo "::set-output name=last-commit::${SHA}"
+    - name: Cache multiple paths
+      uses: actions/cache@v2
+      id: toolchains-cache
+      with:
+        path: am-toolchains
+        key: ${{ runner.os }}-RMerl/am-toolchains-${{ steps.last-toolchain.outputs.last-commit }}
     - name: Check out repository code
+      if: steps.toolchains-cache.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
       with:
         repository: 'RMerl/am-toolchains'
