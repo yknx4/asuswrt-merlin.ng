@@ -7,7 +7,7 @@ runs:
       shell: bash
       id: last-toolchain
       env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        GITHUB_TOKEN: ${{ github.token }}
       run: |
         SHA=$(gh api repos/RMerl/am-toolchains/commits --jq '.[0].sha' | tr -d '\n')
         echo "::set-output name=last-commit::${SHA}"
